@@ -1,0 +1,17 @@
+.env
+.env.*
+!.env.example
+
+*.log
+*.bak
+*.db
+*.sqlite
+*.sqlite3
+
+__pycache__/
+.venv/
+
+models/
+data/
+backups/
+secrets/

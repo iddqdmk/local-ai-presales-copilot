@@ -1,0 +1,35 @@
+
+---
+- name: Validate Docker Compose configuration
+  ansible.builtin.command:
+    cmd: docker compose -f docker-compose.yml config --quiet
+    chdir: "{{ stack_project_dir }}"
+  changed_when: false
+
+- name: Ensure AI stack is running
+  community.docker.docker_compose_v2:
+    project_src: "{{ stack_project_dir }}"
+    files:
+      - docker-compose.yml
+    state: present
+    pull: never
+    build: never
+    recreate: never
+  register: stack_result
+
+- name: Display stack changes
+  ansible.builtin.debug:
+    msg: >-
+      Docker Compose changed:
+      {{ stack_result.changed }}
+
+- name: Show running containers
+  ansible.builtin.command:
+    cmd: docker compose -f docker-compose.yml ps
+    chdir: "{{ stack_project_dir }}"
+  register: stack_status
+  changed_when: false
+
+- name: Display container status
+  ansible.builtin.debug:
+    var: stack_status.stdout_lines

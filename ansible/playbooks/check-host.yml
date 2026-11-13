@@ -1,0 +1,38 @@
+
+---
+- name: Check Local AI Lab Host
+  hosts: local
+  gather_facts: true
+
+  tasks:
+    - name: Show operating system
+      ansible.builtin.debug:
+        msg: >-
+          OS: {{ ansible_distribution }}
+          {{ ansible_distribution_version }}
+
+    - name: Show total memory
+      ansible.builtin.debug:
+        msg: >-
+          Total RAM: {{ ansible_memtotal_mb }} MB
+
+    - name: Check Docker version
+      ansible.builtin.command:
+        cmd: docker --version
+      register: docker_version
+      changed_when: false
+
+    - name: Display Docker version
+      ansible.builtin.debug:
+        var: docker_version.stdout
+
+    - name: Check Docker Compose version
+      ansible.builtin.command:
+        cmd: docker compose version
+      register: compose_version
+      changed_when: false
+
+    - name: Display Docker Compose version
+      ansible.builtin.debug:
+        var: compose_version.stdout
+

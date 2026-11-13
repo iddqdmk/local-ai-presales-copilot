@@ -1,0 +1,9 @@
+---
+- name: Deploy Local AI Pre-Sales Copilot
+  hosts: local
+  gather_facts: false
+  become: true
+
+  roles:
+    - stack
+

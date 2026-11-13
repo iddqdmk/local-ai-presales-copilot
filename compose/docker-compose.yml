@@ -1,0 +1,39 @@
+
+name: local-ai-presales-copilot
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: presales-ollama
+    restart: unless-stopped
+    gpus: all
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - ai_network
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: presales-webui
+    restart: unless-stopped
+    depends_on:
+      - ollama
+    ports:
+      - "127.0.0.1:3000:8080"
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - WEBUI_AUTH=true
+    volumes:
+      - webui_data:/app/backend/data
+    networks:
+      - ai_network
+
+volumes:
+  ollama_data:
+  webui_data:
+
+networks:
+  ai_network:
+    driver: bridge
