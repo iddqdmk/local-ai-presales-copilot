@@ -1,0 +1,6 @@
+
+---
+backup_project_dir: "{{ playbook_dir }}/../../compose"
+backup_destination: "/home/cty/local-ai-backups"
+backup_helper_image: "alpine:3.20"
+backup_extra_free_kb: 1048576

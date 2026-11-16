@@ -1,0 +1,291 @@
+
+---
+# 1. Preflight checks
+
+- name: Validate Compose configuration
+  ansible.builtin.command:
+    cmd: docker compose -f docker-compose.yml config --quiet
+    chdir: "{{ backup_project_dir }}"
+  changed_when: false
+
+- name: Inspect Ollama container
+  ansible.builtin.command:
+    cmd: docker inspect presales-ollama
+  register: ollama_inspect
+  changed_when: false
+
+- name: Inspect Open WebUI container
+  ansible.builtin.command:
+    cmd: docker inspect presales-webui
+  register: webui_inspect
+  changed_when: false
+
+- name: Resolve actual Docker volume names
+  ansible.builtin.set_fact:
+    ollama_volume_name: >-
+      {{ ((ollama_inspect.stdout | from_json)[0].Mounts
+          | selectattr('Destination', 'equalto', '/root/.ollama')
+          | selectattr('Type', 'equalto', 'volume')
+          | map(attribute='Name') | list | first) | default('') }}
+    webui_volume_name: >-
+      {{ ((webui_inspect.stdout | from_json)[0].Mounts
+          | selectattr('Destination', 'equalto', '/app/backend/data')
+          | selectattr('Type', 'equalto', 'volume')
+          | map(attribute='Name') | list | first) | default('') }}
+
+- name: Validate volumes and running containers
+  ansible.builtin.assert:
+    that:
+      - ollama_volume_name | length > 0
+      - webui_volume_name | length > 0
+      - (ollama_inspect.stdout | from_json)[0].State.Running
+      - (webui_inspect.stdout | from_json)[0].State.Running
+    fail_msg: "Volumes missing or AI containers not running."
+
+- name: Verify helper image exists locally
+  ansible.builtin.command:
+    argv:
+      - docker
+      - image
+      - inspect
+      - "{{ backup_helper_image }}"
+  changed_when: false
+
+# 2. Storage checks
+
+- name: Create backup root directory
+  ansible.builtin.file:
+    path: "{{ backup_destination }}"
+    state: directory
+    owner: cty
+    group: cty
+    mode: "0700"
+
+- name: Measure Ollama volume size
+  ansible.builtin.command:
+    argv:
+      - docker
+      - run
+      - --rm
+      - --network
+      - none
+      - -v
+      - "{{ ollama_volume_name }}:/source:ro"
+      - "{{ backup_helper_image }}"
+      - du
+      - -sk
+      - /source
+  register: ollama_size
+  changed_when: false
+
+- name: Measure Open WebUI volume size
+  ansible.builtin.command:
+    argv:
+      - docker
+      - run
+      - --rm
+      - --network
+      - none
+      - -v
+      - "{{ webui_volume_name }}:/source:ro"
+      - "{{ backup_helper_image }}"
+      - du
+      - -sk
+      - /source
+  register: webui_size
+  changed_when: false
+
+- name: Check free disk space
+  ansible.builtin.command:
+    argv:
+      - df
+      - -Pk
+      - "{{ backup_destination }}"
+  register: backup_disk
+  changed_when: false
+
+- name: Calculate required space
+  ansible.builtin.set_fact:
+    backup_required_kb: >-
+      {{ (ollama_size.stdout.split()[0] | int)
+         + (webui_size.stdout.split()[0] | int)
+         + (backup_extra_free_kb | int) }}
+    backup_available_kb: >-
+      {{ backup_disk.stdout_lines[-1].split()[3] | int }}
+
+- name: Validate free space
+  ansible.builtin.assert:
+    that:
+      - (backup_available_kb | int) > (backup_required_kb | int)
+    fail_msg: "Insufficient free disk space for backup."
+
+# 3. Prepare unique backup directory
+
+- name: Generate backup timestamp
+  ansible.builtin.command:
+    cmd: date -u +%Y%m%dT%H%M%SZ
+  register: backup_time
+  changed_when: false
+
+- name: Set backup directory path
+  ansible.builtin.set_fact:
+    backup_run_dir: "{{ backup_destination }}/{{ backup_time.stdout }}"
+
+- name: Check backup directory does not exist
+  ansible.builtin.stat:
+    path: "{{ backup_run_dir }}"
+  register: backup_dir_check
+
+- name: Prevent overwriting existing backup
+  ansible.builtin.assert:
+    that:
+      - not backup_dir_check.stat.exists
+    fail_msg: "Backup directory already exists."
+
+- name: Create backup run directory
+  ansible.builtin.file:
+    path: "{{ backup_run_dir }}"
+    state: directory
+    owner: cty
+    group: cty
+    mode: "0700"
+
+# 4. Cold backup with guaranteed restart attempt
+
+- name: Perform cold backup
+  block:
+
+    - name: Stop AI stack
+      ansible.builtin.command:
+        cmd: docker compose -f docker-compose.yml stop
+        chdir: "{{ backup_project_dir }}"
+      changed_when: true
+
+    - name: Archive Ollama volume
+      ansible.builtin.command:
+        argv:
+          - docker
+          - run
+          - --rm
+          - --network
+          - none
+          - -v
+          - "{{ ollama_volume_name }}:/source:ro"
+          - -v
+          - "{{ backup_run_dir }}:/backup"
+          - "{{ backup_helper_image }}"
+          - tar
+          - -czf
+          - /backup/ollama.tar.gz
+          - -C
+          - /source
+          - .
+      changed_when: true
+
+    - name: Archive Open WebUI volume
+      ansible.builtin.command:
+        argv:
+          - docker
+          - run
+          - --rm
+          - --network
+          - none
+          - -v
+          - "{{ webui_volume_name }}:/source:ro"
+          - -v
+          - "{{ backup_run_dir }}:/backup"
+          - "{{ backup_helper_image }}"
+          - tar
+          - -czf
+          - /backup/webui.tar.gz
+          - -C
+          - /source
+          - .
+      changed_when: true
+
+  always:
+
+    - name: Restart AI stack
+      ansible.builtin.command:
+        cmd: docker compose -f docker-compose.yml up -d --no-build --no-recreate
+        chdir: "{{ backup_project_dir }}"
+      changed_when: true
+
+# 5. Validate backup files
+
+- name: Validate Ollama archive
+  ansible.builtin.shell:
+    cmd: tar -tzf "{{ backup_run_dir }}/ollama.tar.gz" > /dev/null
+  changed_when: false
+
+- name: Validate Open WebUI archive
+  ansible.builtin.shell:
+    cmd: tar -tzf "{{ backup_run_dir }}/webui.tar.gz" > /dev/null
+  changed_when: false
+
+- name: Calculate Ollama checksum
+  ansible.builtin.command:
+    cmd: sha256sum ollama.tar.gz
+    chdir: "{{ backup_run_dir }}"
+  register: ollama_checksum
+  changed_when: false
+
+- name: Calculate Open WebUI checksum
+  ansible.builtin.command:
+    cmd: sha256sum webui.tar.gz
+    chdir: "{{ backup_run_dir }}"
+  register: webui_checksum
+  changed_when: false
+
+- name: Save checksum manifest
+  ansible.builtin.copy:
+    dest: "{{ backup_run_dir }}/SHA256SUMS"
+    content: |
+      {{ ollama_checksum.stdout }}
+      {{ webui_checksum.stdout }}
+    owner: cty
+    group: cty
+    mode: "0600"
+
+- name: Verify archive checksums
+  ansible.builtin.command:
+    cmd: sha256sum -c SHA256SUMS
+    chdir: "{{ backup_run_dir }}"
+  changed_when: false
+
+
+- name: Set backup archive permissions
+  ansible.builtin.file:
+    path: "{{ backup_run_dir }}/{{ item }}"
+    owner: cty
+    group: cty
+    mode: "0600"
+  loop:
+    - ollama.tar.gz
+    - webui.tar.gz
+    - SHA256SUMS
+
+
+
+# 6. Verify services recovered
+
+- name: Inspect containers after backup
+  ansible.builtin.command:
+    argv:
+      - docker
+      - inspect
+      - presales-ollama
+      - presales-webui
+  register: final_inspect
+  changed_when: false
+
+- name: Assert containers are running
+  ansible.builtin.assert:
+    that:
+      - (final_inspect.stdout | from_json)[0].State.Running
+      - (final_inspect.stdout | from_json)[1].State.Running
+    fail_msg: "One or more AI containers are not running."
+
+- name: Display backup location
+  ansible.builtin.debug:
+    msg: "Backup created: {{ backup_run_dir }}"

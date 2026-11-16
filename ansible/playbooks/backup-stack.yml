@@ -1,0 +1,9 @@
+
+---
+- name: Backup Local AI Pre-Sales Copilot
+  hosts: local
+  become: true
+  gather_facts: true
+
+  roles:
+    - backup
