@@ -15,3 +15,29 @@ models/
 data/
 backups/
 secrets/
+rag/documents/
+knowledge/
+
+# Local RAG indexes containing extracted vendor documentation
+rag/index/
+releases/
+
+# Generated evaluation data and runtime results
+eval/results/
+demo/results/
+
+# Local documents and vendor materials
+*.pdf
+
+# Python and tooling
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,46 @@
+{
+  "scenario_id": "customer-30-users",
+  "currency": "USD",
+  "period_years": 3,
+  "electricity_price_per_kwh": null,
+  "options": {
+    "A": {
+      "name": "Traditional SAN",
+      "capex": {
+        "compute_servers": 24000,
+        "primary_storage": 35000,
+        "network_equipment": 8000,
+        "backup_hardware": 6000,
+        "implementation": 7000
+      },
+      "annual_opex": {
+        "virtualization_licensing": 6000,
+        "backup_licensing": 2500,
+        "hardware_support": 5000,
+        "software_support": 2000,
+        "electricity": 2500,
+        "other": 1000
+      }
+    },
+    "B": {
+      "name": "Hyperconverged Infrastructure",
+      "capex": {
+        "compute_servers": 32000,
+        "primary_storage": 8000,
+        "network_equipment": 7000,
+        "backup_hardware": 6000,
+        "implementation": 9000
+      },
+      "annual_opex": {
+        "virtualization_licensing": 9000,
+        "backup_licensing": 2500,
+        "hardware_support": 4500,
+        "software_support": 3000,
+        "electricity": 2000,
+        "other": 1000
+      }
+    }
+  },
+  "pricing_type": "illustrative",
+  "pricing_disclaimer": "Synthetic demonstration figures only. Not vendor quotations, market prices, or purchasing advice."
+}

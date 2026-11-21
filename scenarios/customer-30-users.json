@@ -1,0 +1,76 @@
+{
+  "scenario_id": "customer-30-users",
+  "scenario_name": "Small Business Infrastructure Modernization",
+  "scenario_type": "fictional_demo",
+  "customer": {
+    "industry": "Professional Services",
+    "users": 30,
+    "sites": 1,
+    "existing_infrastructure": "Legacy physical servers",
+    "business_goal": "Consolidate workloads onto a virtualized infrastructure"
+  },
+  "requirements": {
+    "virtualization": true,
+    "high_availability": true,
+    "centralized_storage": true,
+    "backup": true,
+    "immutable_backup": true,
+    "on_premises": true
+  },
+  "workloads": [
+    {
+      "name": "Active Directory and DNS",
+      "vm_count": 2
+    },
+    {
+      "name": "File Server",
+      "vm_count": 1
+    },
+    {
+      "name": "Application Server",
+      "vm_count": 2
+    },
+    {
+      "name": "Database Server",
+      "vm_count": 1
+    },
+    {
+      "name": "Monitoring and Management",
+      "vm_count": 1
+    }
+  ],
+  "capacity_inputs": {
+    "total_vms": 7,
+    "vcpu_per_vm": null,
+    "ram_gb_per_vm": null,
+    "storage_gb_per_vm": null,
+    "peak_iops": null,
+    "annual_data_growth_percent": null
+  },
+  "availability": {
+    "rpo_hours": null,
+    "rto_hours": null,
+    "backup_retention_days": null
+  },
+  "candidate_technologies": {
+    "compute": "Dell PowerEdge R760",
+    "storage": "Dell PowerStore 1200T",
+    "virtualization": "VMware vSphere",
+    "backup": "Veeam Backup & Replication"
+  },
+  "commercial": {
+    "currency": "USD",
+    "hardware_prices": null,
+    "software_prices": null,
+    "support_prices": null,
+    "electricity_price_per_kwh": null
+  },
+  "deliverables": [
+    "Requirements assessment",
+    "Preliminary infrastructure sizing",
+    "Logical architecture",
+    "Indicative Bill of Materials",
+    "Three-year TCO estimate",
+    "Technical assumptions and risks"
+  ]
+}

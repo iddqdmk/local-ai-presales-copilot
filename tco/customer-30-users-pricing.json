@@ -1,0 +1,44 @@
+{
+  "scenario_id": "customer-30-users",
+  "currency": "USD",
+  "period_years": 3,
+  "electricity_price_per_kwh": null,
+  "options": {
+    "A": {
+      "name": "Traditional SAN",
+      "capex": {
+        "compute_servers": null,
+        "primary_storage": null,
+        "network_equipment": null,
+        "backup_hardware": null,
+        "implementation": null
+      },
+      "annual_opex": {
+        "virtualization_licensing": null,
+        "backup_licensing": null,
+        "hardware_support": null,
+        "software_support": null,
+        "electricity": null,
+        "other": null
+      }
+    },
+    "B": {
+      "name": "Hyperconverged Infrastructure",
+      "capex": {
+        "compute_servers": null,
+        "primary_storage": null,
+        "network_equipment": null,
+        "backup_hardware": null,
+        "implementation": null
+      },
+      "annual_opex": {
+        "virtualization_licensing": null,
+        "backup_licensing": null,
+        "hardware_support": null,
+        "software_support": null,
+        "electricity": null,
+        "other": null
+      }
+    }
+  }
+}

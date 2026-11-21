@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0",
+  "documents": [
+    {
+      "id": "veeam-br-13",
+      "vendor": "Veeam",
+      "product": "Backup & Replication",
+      "version": "13",
+      "document_type": "user_guide",
+      "index_path": "rag/index/veeam-hardened-repository-index.json",
+      "status": "active",
+      "record_count": 60,
+      "chunk_size": 500,
+      "chunk_overlap": 75
+    },
+    {
+      "id": "vmware-vsphere-8",
+      "vendor": "VMware",
+      "product": "vSphere Availability",
+      "version": "8.0",
+      "document_type": "administration_guide",
+      "index_path": "rag/index/vmware-availability-1000-test.json",
+      "status": "active",
+      "record_count": 81,
+      "chunk_size": 1000,
+      "chunk_overlap": 150
+    },
+    {
+      "id": "dell-poweredge-r760",
+      "vendor": "Dell",
+      "product": "PowerEdge R760",
+      "version": "2026",
+      "document_type": "installation_service_manual",
+      "index_path": "rag/index/dell-poweredge-r760-index.json",
+      "status": "active",
+      "record_count": 1388,
+      "chunk_size": 500,
+      "chunk_overlap": 75
+    },
+    {
+      "id": "dell-powerstore-hardware",
+      "vendor": "Dell",
+      "product": "PowerStore 1200T Hardware",
+      "version": "5.x",
+      "document_type": "hardware_guide",
+      "index_path": "rag/index/dell-powerstore-hardware-index.json",
+      "status": "active",
+      "record_count": 145,
+      "chunk_size": 500,
+      "chunk_overlap": 75
+    },
+    {
+      "id": "dell-powerstore-planning",
+      "vendor": "Dell",
+      "product": "PowerStore 1200T Planning",
+      "version": "5.x",
+      "document_type": "planning_guide",
+      "index_path": "rag/index/dell-powerstore-planning-index.json",
+      "status": "active",
+      "record_count": 213,
+      "chunk_size": 500,
+      "chunk_overlap": 75
+    }
+  ]
+}
