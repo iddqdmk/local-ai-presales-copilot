@@ -1,0 +1,30 @@
+{
+  "scenario_id": "customer-30-users",
+  "currency": "USD",
+  "period_years": 3,
+  "options": {
+    "A": {
+      "name": "Traditional SAN",
+      "complete": true,
+      "known_capex": 80000.0,
+      "known_annual_opex": 19000.0,
+      "known_total_3y": 137000.0,
+      "tco_3y": 137000.0,
+      "missing_inputs": []
+    },
+    "B": {
+      "name": "Hyperconverged Infrastructure",
+      "complete": true,
+      "known_capex": 62000.0,
+      "known_annual_opex": 22000.0,
+      "known_total_3y": 128000.0,
+      "tco_3y": 128000.0,
+      "missing_inputs": []
+    }
+  },
+  "comparison": {
+    "available": true,
+    "difference": 9000.0,
+    "lower_tco_option": "B"
+  }
+}

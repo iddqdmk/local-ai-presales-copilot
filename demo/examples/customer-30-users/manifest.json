@@ -1,0 +1,12 @@
+{
+  "scenario_id": "customer-30-users",
+  "pricing_type": "illustrative",
+  "artifacts": {
+    "sizing": "sizing.json",
+    "architecture_comparison": "architecture-comparison.md",
+    "tco": "tco.json",
+    "proposal": "proposal.md"
+  },
+  "status": "generated",
+  "note": "Outputs are preliminary and require engineering validation."
+}

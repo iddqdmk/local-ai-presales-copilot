@@ -1,0 +1,79 @@
+{
+  "scenario_id": "customer-30-users",
+  "users": 30,
+  "total_vms": 7,
+  "workloads": [
+    {
+      "workload": "Active Directory and DNS",
+      "vm_count": 2,
+      "vcpu": 2,
+      "ram_gb": 4,
+      "storage_gb": 80
+    },
+    {
+      "workload": "File Server",
+      "vm_count": 1,
+      "vcpu": 4,
+      "ram_gb": 8,
+      "storage_gb": 1000
+    },
+    {
+      "workload": "Application Server",
+      "vm_count": 2,
+      "vcpu": 4,
+      "ram_gb": 16,
+      "storage_gb": 150
+    },
+    {
+      "workload": "Database Server",
+      "vm_count": 1,
+      "vcpu": 8,
+      "ram_gb": 32,
+      "storage_gb": 500
+    },
+    {
+      "workload": "Monitoring and Management",
+      "vm_count": 1,
+      "vcpu": 2,
+      "ram_gb": 8,
+      "storage_gb": 100
+    }
+  ],
+  "resource_demand": {
+    "total_vcpu": 26,
+    "total_ram_gb": 88,
+    "initial_storage_gb": 2060
+  },
+  "storage_sizing": {
+    "projected_data_gb": 3559.68,
+    "required_usable_capacity_gb": 4449.6
+  },
+  "compute_sizing": {
+    "cpu_capacity_per_host_vcpu": 44.8,
+    "ram_capacity_per_host_gb": 185.6,
+    "required_surviving_hosts": 1,
+    "recommended_host_count": 2,
+    "ha_model": "N+1 host capacity"
+  },
+  "assumptions": {
+    "annual_growth_percent": 20,
+    "planning_years": 3,
+    "storage_free_capacity_percent": 20,
+    "cpu_overcommit_ratio": 2.0,
+    "host_ram_gb": 256,
+    "host_physical_cores": 32,
+    "host_reserved_ram_gb": 24,
+    "target_cpu_utilization": 0.7,
+    "target_ram_utilization": 0.8,
+    "ha_host_failures": 1,
+    "minimum_ha_hosts": 2
+  },
+  "limitations": [
+    "All VM profiles are demonstration assumptions.",
+    "CPU sizing uses an assumed vCPU-to-core ratio.",
+    "No measured utilization or peak IOPS are available.",
+    "Storage is logical capacity before RAID, metadata, snapshots and data reduction.",
+    "Backup repository capacity is not included.",
+    "Host count is a capacity estimate, not a validated Dell hardware configuration."
+  ]
+}

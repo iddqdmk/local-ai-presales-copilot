@@ -41,6 +41,24 @@ Current capabilities:
 
 This workflow operates independently of the local LLM.
 
+## Why I Built This
+
+I have worked in IT for around eight years, including the last
+three years in pre-sales engineering.
+
+I wanted to explore whether local AI and Python automation could
+help with the repetitive parts of pre-sales work: finding information
+in vendor documentation, preparing initial infrastructure calculations,
+and organizing technical proposals.
+
+One thing I learned during the project was that not every task needs
+an LLM. For calculations like infrastructure sizing and TCO, I found
+it more practical to use explicit rules and keep AI focused on
+retrieving information from technical documents.
+
+The result is a working prototype with two separate components,
+rather than an autonomous AI solution.
+
 ## 2. System Architecture
 
 ### Engineering Workflow
@@ -116,11 +134,10 @@ The engineering workflow can run without Ollama, a GPU, or downloaded vendor PDF
 ### Clone the repository
 
 ```bash
-git clone <REPOSITORY_URL>
+git clone https://github.com/iddqdmk/local-ai-presales-copilot.git
 cd local-ai-presales-copilot
 ```
 
-Replace `<REPOSITORY_URL>` with the actual GitHub repository URL.
 
 ### Run the engineering workflow
 
@@ -130,6 +147,30 @@ python run_presales_workflow.py \
   --pricing tco/customer-30-users-demo-pricing.json \
   --output-dir demo/results/workflow-30-users
 ```
+
+### Browse the Example Outputs
+
+The repository includes generated artifacts from a fictional
+30-user customer scenario. You can review the results without
+running the workflow.
+
+- [Infrastructure Sizing](demo/examples/customer-30-users/sizing.json)
+- [SAN vs HCI Comparison](demo/examples/customer-30-users/architecture-comparison.md)
+- [Three-Year TCO](demo/examples/customer-30-users/tco.json)
+- [Technical Proposal](demo/examples/customer-30-users/proposal.md)
+- [Workflow Manifest](demo/examples/customer-30-users/manifest.json)
+
+The example prices are synthetic. These documents are preliminary
+engineering outputs, not validated vendor quotations or production
+deployment designs.
+
+**Commercial interpretation:** The published proposal contains
+an illustrative TCO calculation using synthetic prices.
+A validated commercial TCO would require actual vendor quotations,
+confirmed licensing and support costs, and operating assumptions.
+
+The public proposal example includes a documentation clarification
+that is not yet reflected in the base proposal generator.
 
 ### Generated Files
 
@@ -321,11 +362,11 @@ Implemented:
 - Architecture comparison
 - Three-year TCO calculation
 - Technical proposal generation
-- Unified engineering workflow
+- Unified engineering workflow for sizing, architecture comparison, TCO and proposal generation
 
 The engineering workflow has been successfully tested with the included 30-user customer scenario.
 
-Public installation and reproducibility checks are being finalized.
+The engineering workflow was successfully tested from an isolated copy of the public project files on Ubuntu/WSL2. The RAG assistant requires separate local documentation, indexes, and model setup.
 
 ## 12. Intended Use
 
